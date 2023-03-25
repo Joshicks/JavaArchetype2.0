@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -74,6 +75,52 @@ class UserServiceTest {
     // then
     assertNotNull(user);
     LOG.info("Response: {}", user);
+  }
+
+  /**
+   * Test method for validate if roles list is empty
+   * {@link com.example.service.impl.UserServiceImpl#create(com.example.commons.dto.UserDto)}.
+   */
+  @Test
+  void testValidateRolesEmpty() {
+    // Initial data
+    var emptyList = new ArrayList<RoleDto>();
+    var dto = new UserDto();
+    dto.setUsername("JohnDoe");
+    dto.setEmail("john.doe@example.com");
+    dto.setName("John");
+    dto.setLastName("Doe");
+    dto.setRoles(emptyList);
+
+    // Call
+    var response = this.userService.create(dto);
+
+    // Validation
+    assertNotNull(response);
+    assertEquals(ErrorCode.NOT_ROLE_SELECTED.getCode(), response.getHeader().getCode());
+  }
+
+  /**
+   * Test method for validate if roles list is null
+   * {@link com.example.service.impl.UserServiceImpl#create(com.example.commons.dto.UserDto)}.
+   */
+  @Test
+  void testValidateRolesNull() {
+    // Initial data
+    List<RoleDto> nullList = null;
+    var dto = new UserDto();
+    dto.setUsername("JohnDoe");
+    dto.setEmail("john.doe@example.com");
+    dto.setName("John");
+    dto.setLastName("Doe");
+    dto.setRoles(nullList);
+
+    // Call
+    var response = this.userService.create(dto);
+
+    // Validation
+    assertNotNull(response);
+    assertEquals(ErrorCode.NOT_ROLE_SELECTED.getCode(), response.getHeader().getCode());
   }
 
   /**

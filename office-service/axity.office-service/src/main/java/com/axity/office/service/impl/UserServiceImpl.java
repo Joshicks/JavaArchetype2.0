@@ -25,6 +25,7 @@ import com.axity.office.persistence.UserPersistence;
 import com.axity.office.service.UserService;
 import com.github.dozermapper.core.Mapper;
 import lombok.extern.slf4j.Slf4j;
+
 /**
  * Class UserServiceImpl
  * 
@@ -107,21 +108,29 @@ public class UserServiceImpl implements UserService {
 
       return genericResponse;
     }
-    List<RoleDto> rolesSelected = dto.getRoles();
-List<RoleDto> nonExistingRoles = new ArrayList<>();
-
-for (RoleDto role : rolesSelected) {
-    if (!doesRoleExist(role.getId())) {
-        nonExistingRoles.add(role);
+    List<RoleDto> myroles = dto.getRoles();
+    if (myroles == null || isRolesEmpty(myroles)) {
+      GenericResponseDto<UserDto> genericResponse = new GenericResponseDto<>();
+      genericResponse
+          .setHeader(new HeaderDto(ErrorCode.NOT_ROLE_SELECTED.getCode(), "Error. You must select at least one role."));
+      return genericResponse;
     }
-}
 
-if (!nonExistingRoles.isEmpty()) {
-    GenericResponseDto<UserDto> genericResponse = new GenericResponseDto<>();
-    genericResponse.setHeader(new HeaderDto(ErrorCode.ROLE_NOT_FOUND.getCode(), "Error. The following roles do not exist: " + nonExistingRoles));
-    return genericResponse;
-}
+    List<RoleDto> rolesSelected = dto.getRoles();
+    List<RoleDto> nonExistingRoles = new ArrayList<>();
 
+    for (RoleDto role : rolesSelected) {
+      if (!doesRoleExist(role.getId())) {
+        nonExistingRoles.add(role);
+      }
+    }
+
+    if (!nonExistingRoles.isEmpty()) {
+      GenericResponseDto<UserDto> genericResponse = new GenericResponseDto<>();
+      genericResponse.setHeader(new HeaderDto(ErrorCode.ROLE_NOT_FOUND.getCode(),
+          "Error. The following roles do not exist: " + nonExistingRoles));
+      return genericResponse;
+    }
 
     UserDO entity = new UserDO();
     this.mapper.map(dto, entity);
@@ -191,5 +200,15 @@ if (!nonExistingRoles.isEmpty()) {
     // TODO Auto-generated method stub
     return this.rolePersistence.findById(roleId).isPresent();
   }
+  /**
+
+    Method to check if the list of roles is empty.
+    @param roles the list of roles to check
+    @return true if the list is empty, false otherwise
+    */
+    @Override
+    public boolean isRolesEmpty(List<RoleDto> rolesList) {
+    return rolesList.isEmpty();
+    }
 
 }

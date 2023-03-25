@@ -1,5 +1,8 @@
 package com.axity.office.service;
 
+import java.util.List;
+
+import com.axity.office.commons.dto.RoleDto;
 import com.axity.office.commons.dto.UserDto;
 import com.axity.office.commons.request.PaginatedRequestDto;
 import com.axity.office.commons.response.GenericResponseDto;
@@ -68,13 +71,22 @@ public interface UserService {
    * @return true if email already exists, false otherwise.
    */
   boolean existEmail(String email);
-  /**
- * Method to check if a role exists
- *
- * @param roleId The ID of the role to check
- * @return true if the role exists, false otherwise
- */
-boolean doesRoleExist(Integer roleId);
 
+  /**
+   * Method to check if a role exists
+   *
+   * @param roleId The ID of the role to check
+   * @return true if the role exists, false otherwise
+   */
+  boolean doesRoleExist(Integer roleId);
+
+  /**
+   * 
+   * Method to check if the list of roles is empty.
+   * 
+   * @param roles the list of roles to check
+   * @return true if the list is empty, false otherwise
+   */
+  boolean isRolesEmpty(List<RoleDto> roles);
 
 }
